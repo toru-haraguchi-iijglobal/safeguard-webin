@@ -53,7 +53,7 @@ type ArgsStruct struct {
 	config                   string // -conf=[config file path] default: "webin.conf"
 	jump                     bool   // -jump=[true or false] default: false
 	step                     bool   // -step=[true or false] default: false
-	navigateOnly             bool
+	navigateOnly             bool   // -navonly=[true or false] default:false
 	account                  string // -act=[sign-in account]
 	password                 string // -pwd=[password]
 	asset                    string // -asset=[asset name of SPP]

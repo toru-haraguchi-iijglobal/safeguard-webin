@@ -11,7 +11,7 @@ type Params struct {
 	Asset                 string `json:"asset"`                   // -asset=[asset name of SPP]
 	Jump                  bool   `json:"jump"`                    // -jump=[true or false] default: false
 	Step                  bool   `json:"step"`                    // -step=[true or false] default: false
-	NavigateOnly          bool   `json:"navigate_only"`           // new
+	NavigateOnly          bool   `json:"navigate_only"`           // -navonly=[true or false] default:false
 	Account               string `json:"account"`                 // -act=[sign-in account]
 	Password              string `json:"password"`                // -pwd=[password]
 	TargetUrl             string `json:"target_url"`              // -url=[target url] Exp: "https://portal.azure.com/"
@@ -44,7 +44,13 @@ func run_by_asset_json(filename string) bool {
 	for {
 		err := decoder.Decode(&params_from_json)
 		if err != nil {
-			log.Fatal(err)
+			if err == io.EOF {
+				log.Println("Asset \"" + args.asset + "\" not found")
+				log.Fatal(err)
+			} else {
+				log.Println("Last correct asset: " + params_from_json.Asset)
+				log.Fatal(err)
+			}
 		}
 		if params_from_json.Asset == args.asset {
 			// Exist asset
