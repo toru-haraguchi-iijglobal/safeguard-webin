@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -33,7 +34,12 @@ var params_from_json Params
 
 func run_by_asset_json(json_filename string) bool {
 	// Open error logfile and redirect log
-	log_filename := "webin_" + strconv.Itoa(os.Getpid()) + ".log"
+	exe_path, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	exe_path = filepath.Dir(exe_path)
+	log_filename := exe_path + "\\webin_" + strconv.Itoa(os.Getpid()) + ".log"
 	logfile, err := os.OpenFile(log_filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
