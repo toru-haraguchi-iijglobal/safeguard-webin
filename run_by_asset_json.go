@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 type Params struct {
@@ -30,17 +31,25 @@ type Params struct {
 
 var params_from_json Params
 
-func run_by_asset_json(filename string) bool {
-	// Open config file
-	file, err := os.Open(filename)
+func run_by_asset_json(json_filename string) bool {
+	// Open error logfile and redirect log
+	log_filename := "webin_" + strconv.Itoa(os.Getpid()) + ".log"
+	logfile, err := os.OpenFile(log_filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatalln("'" + filename + "' file could not be opened.")
+		log.Fatal(err)
 	}
-	// Read config file
-	defer file.Close()
+	defer logfile.Close()
+	log.SetOutput(logfile)
 
-	decoder := json.NewDecoder(io.Reader(file))
+	// Open config jsonfile
+	jsonfile, err := os.Open(json_filename)
+	if err != nil {
+		log.Fatalln("'" + json_filename + "' file could not be opened.")
+	}
+	defer jsonfile.Close()
+	decoder := json.NewDecoder(io.Reader(jsonfile))
 
+	// Scan jsonfile for the asset specified
 	for {
 		err := decoder.Decode(&params_from_json)
 		if err != nil {
@@ -53,7 +62,7 @@ func run_by_asset_json(filename string) bool {
 			}
 		}
 		if params_from_json.Asset == args.asset {
-			// Exist asset
+			// The asset specified exists
 			args.jump = params_from_json.Jump
 			args.step = params_from_json.Step
 			args.navigateOnly = params_from_json.NavigateOnly
@@ -74,6 +83,9 @@ func run_by_asset_json(filename string) bool {
 	}
 	// Validate arguments
 	if validate_args() {
+		// Everything correct including JSON file. No log needed.
+		logfile.Close()
+		os.Remove(log_filename)
 		// Run
 		return run()
 	}
