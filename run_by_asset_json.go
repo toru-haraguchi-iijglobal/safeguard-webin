@@ -30,7 +30,7 @@ type Params struct {
 	Debug                 bool   `json:"debug"`                   // -debug=[true or false] default: false
 }
 
-var params_from_json Params
+// var params_from_json Params
 
 func run_by_asset_json(json_filename string) bool {
 	// Open error logfile and redirect log
@@ -57,6 +57,7 @@ func run_by_asset_json(json_filename string) bool {
 
 	// Scan jsonfile for the asset specified
 	for {
+		var params_from_json Params
 		err := decoder.Decode(&params_from_json)
 		if err != nil {
 			if err == io.EOF {
@@ -67,6 +68,7 @@ func run_by_asset_json(json_filename string) bool {
 				log.Fatal(err)
 			}
 		}
+
 		if params_from_json.Asset == args.asset {
 			// The asset specified exists
 			args.jump = params_from_json.Jump
