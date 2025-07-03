@@ -30,8 +30,6 @@ type Params struct {
 	Debug                 bool   `json:"debug"`                   // -debug=[true or false] default: false
 }
 
-// var params_from_json Params
-
 func run_by_asset_json(json_filename string) bool {
 	// Open error logfile and redirect log
 	exe_path, err := os.Executable()
